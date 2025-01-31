@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diligentia blokjes generator</title>
+  <style>
+    body {
+      font-family: Sofia Sans;
+      max-width: 600px;
+      margin: 50px auto;
+      text-align: center;
+	  style"color": ed1c24;
+    }
+    label, input, button {
+      margin: 10px 0;
+      display: block;
+    }
+    .result {
+      background-color: #f9f9f9;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+  </style>
+  <script>
+    function calculateRequirements() {
+      const blocks = parseInt(document.getElementById('blocks').value);
+      const specialDistribution = document.getElementById('special-distribution').checked;
+
+      if (isNaN(blocks) || blocks <= 0) {
+        alert('Please enter a valid number of blocks.');
+        return;
+      }
+
+      // Glassware calculations
+      const totalWineGlasses = 16 * blocks;
+      const totalJuiceGlasses = 4 * blocks;
+      const wineGlassUnits = Math.ceil(totalWineGlasses / 25);
+      const juiceGlassUnits = Math.ceil(totalJuiceGlasses / 25);
+
+      // Drink calculations based on distribution
+      let whiteWineGlasses = specialDistribution ? 4 * blocks : 8 * blocks;
+      const redWineGlasses = 4 * blocks;
+      let waterGlasses = specialDistribution ? 8 * blocks : 4 * blocks;
+      const orangeJuiceGlasses = 4 * blocks;
+
+      // Drink units (rounded up)
+      const whiteWineUnits = Math.ceil(whiteWineGlasses / 6);
+      const redWineUnits = Math.ceil(redWineGlasses / 6);
+      const waterUnits = Math.ceil(waterGlasses / 8);
+      const juiceUnits = Math.ceil(orangeJuiceGlasses / 5);
+
+      // Display results
+      document.getElementById('results').innerHTML = `
+        <div class="result">
+          <h2>Results for ${blocks} Block(s)</h2>
+          <p><strong>Glaswerk:</strong></p>
+          <p>Kratjes wijnglazen: ${wineGlassUnits}</p>
+          <p>Kratjes j'us glazen: ${juiceGlassUnits}</p>
+          <p><strong>Drank:</strong></p>
+          <p>Flessen wit: ${whiteWineUnits}</p>
+          <p>Flessen rood: ${redWineUnits}</p>
+          <p>Flessen water: ${waterUnits}</p>
+          <p>Pakken j'us: ${juiceUnits}</p>
+        </div>
+      `;
+    }
+  </script>
+</head>
+<body>
+  <h1>Diligentia blokjes generator!</h1>
+  <label for="blocks">Voer aantal blokjes in:</label>
+  <input type="number" id="blocks" min="1" placeholder="Hoeveel blokjes wil je?">
+
+  <label>
+    <input type="checkbox" id="special-distribution"> Vink aan indien dubbel water, helft wit
+  </label>
+
+  <button onclick="calculateRequirements()">Diligentia rekent</button>
+
+  <div id="results"></div>
+</body>
+</html>
