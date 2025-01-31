@@ -3,82 +3,200 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diligentia blokjes generator</title>
+  <title>Diligentia Bar Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Sofia Sans;
+      font-family: 'Sofia Sans', sans-serif;
+      background-color: #ed1c24;
       max-width: 600px;
       margin: 50px auto;
       text-align: center;
-	  style"color": ed1c24;
     }
-    label, input, button {
+    h1 {
+      color: #ffffff;
+      font-family: 'Graphik', sans-serif;
+      font-weight: bold;
+      font-style: italic;
+    }
+    label {
+      color: #ffffff;
+      font-family: 'Sofia Sans', sans-serif;
+      display: block;
+      margin: 10px 0;
+    }
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input, button {
       margin: 10px 0;
       display: block;
     }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .result button {
+      margin: 10px;
+    }
+    .hidden {
+      display: none;
+    }
     .result {
-      background-color: #f9f9f9;
+      background-color: #ffffff;
       padding: 15px;
       margin-top: 20px;
       border-radius: 10px;
     }
+    .result h2, .result p {
+      font-family: 'Sofia Sans', sans-serif;
+      color: #ed1c24;
+    }
   </style>
   <script>
-    function calculateRequirements() {
-      const blocks = parseInt(document.getElementById('blocks').value);
-      const specialDistribution = document.getElementById('special-distribution').checked;
+    function togglePlateauInput() {
+      const plateauCheckbox = document.getElementById('plateau-checkbox');
+      const plateauInput = document.getElementById('plateau-input');
+      plateauInput.classList.toggle('hidden', !plateauCheckbox.checked);
+    }
 
-      if (isNaN(blocks) || blocks <= 0) {
-        alert('Please enter a valid number of blocks.');
+    function calculateRequirements() {
+      let inputValue = document.getElementById('blocks').value.trim().toLowerCase();
+      const plateausChecked = document.getElementById('plateau-checkbox').checked;
+      const plateaus = plateausChecked ? parseInt(document.getElementById('plateaus').value) || 0 : 0;
+      
+      const specialMessages = {
+        '420': 'Ben jij Thijs?',
+        '69': 'Nice.',
+        'nick': 'We missen Nick!',
+        'xyrian': 'Ik kan huisjes bouwen!',
+        'carolus': 'Omg, hij heeft dit gebouwd?',
+        'noor': 'Barhoofd nummer 1, heb je dit echt nodig?',
+        'isis': 'Crisis met Isis!'
+      };
+      
+      if (specialMessages[inputValue]) {
+        alert(specialMessages[inputValue]);
         return;
       }
-
+      
+      const blocks = parseInt(inputValue);
+      if (isNaN(blocks) || blocks <= 0) {
+        alert('Voer een geldig aantal in, lullo.');
+        return;
+      }
+      
+      if (blocks > 10) {
+        const confirmAction = confirm("Serieus...meer dan 10 blokjes? Damn...");
+        if (!confirmAction) return;
+      }
+      
+      document.getElementById('results').classList.remove('hidden');
+      document.getElementById('input-section').classList.add('hidden');
+      
       // Glassware calculations
-      const totalWineGlasses = 16 * blocks;
-      const totalJuiceGlasses = 4 * blocks;
+      const totalWineGlasses = (16 * blocks) + (6 * plateaus);
+      const totalJuiceGlasses = (4 * blocks) + (3 * plateaus);
       const wineGlassUnits = Math.ceil(totalWineGlasses / 25);
       const juiceGlassUnits = Math.ceil(totalJuiceGlasses / 25);
-
-      // Drink calculations based on distribution
-      let whiteWineGlasses = specialDistribution ? 4 * blocks : 8 * blocks;
-      const redWineGlasses = 4 * blocks;
-      let waterGlasses = specialDistribution ? 8 * blocks : 4 * blocks;
-      const orangeJuiceGlasses = 4 * blocks;
-
-      // Drink units (rounded up)
-      const whiteWineUnits = Math.ceil(whiteWineGlasses / 6);
-      const redWineUnits = Math.ceil(redWineGlasses / 6);
-      const waterUnits = Math.ceil(waterGlasses / 8);
-      const juiceUnits = Math.ceil(orangeJuiceGlasses / 5);
-
+      
+      // Drink calculations
+      const whiteWineUnits = Math.ceil(((8 * blocks) + (6 * plateaus)) / 6);
+      const redWineUnits = Math.ceil(((4 * blocks) + (3 * plateaus)) / 6);
+      const waterUnits = Math.ceil(((4 * blocks) + (3 * plateaus)) / 8);
+      const juiceUnits = Math.ceil(((4 * blocks) + (3 * plateaus)) / 5);
+      
       // Display results
       document.getElementById('results').innerHTML = `
         <div class="result">
-          <h2>Results for ${blocks} Block(s)</h2>
+          <h2>Hoeveel heb je nodig voor ${blocks} blokjes en ${plateaus} plateaus</h2>
           <p><strong>Glaswerk:</strong></p>
           <p>Kratjes wijnglazen: ${wineGlassUnits}</p>
           <p>Kratjes j'us glazen: ${juiceGlassUnits}</p>
           <p><strong>Drank:</strong></p>
-          <p>Flessen wit: ${whiteWineUnits}</p>
-          <p>Flessen rood: ${redWineUnits}</p>
-          <p>Flessen water: ${waterUnits}</p>
-          <p>Pakken j'us: ${juiceUnits}</p>
+          <p>Wit: ${whiteWineUnits}</p>
+          <p>Rood: ${redWineUnits}</p>
+          <p>Water: ${waterUnits}</p>
+          <p>J'us: ${juiceUnits}</p>
+          <div class="button-container">
+            <button onclick="restart()">Begin opnieuw</button>
+            <button onclick="showRoast()">Verrassing...</button>
+          </div>
         </div>
       `;
+    }
+    
+    function restart() {
+      document.getElementById('input-section').classList.remove('hidden');
+      document.getElementById('results').classList.add('hidden');
+    }
+    
+    function showRoast() {
+      const roasts = [
+		"Zelfs een kapotte klok heeft twee keer per dag gelijk, jij niet eens dat.",
+        "Je haar ziet eruit alsof je tegen de wind in hebt geslapen.",
+        "Als er een prijs was voor nutteloos zijn, zou je tweede worden. Want nutteloos ben je zelfs niet goed in.",
+        "Jouw WiFi-signaal is sterker dan je persoonlijkheid.",
+        "Ik zou je roasten, maar ik zie dat het leven dat al voor me heeft gedaan.",
+        "Je bent het menselijke equivalent van een 404-error.",
+        "Jouw IQ en kamertemperatuur hebben veel gemeen.",
+        "Je hebt de uitstraling van een natte sok.",
+        "Als luiheid een kunst was, was jij een meester.",
+        "Je hebt de charme van een verkeersdrempel.",
+        "Als humor een bankrekening was, was je failliet.",
+        "Je reflectie draait zich liever om als je in de spiegel kijkt.",
+        "Je hebt de sociale finesse van een deurstop.",
+        "Zelfs Google kan niets positiefs over je vinden.",
+        "Je hebt het charisma van een baksteen.",
+        "Je persoonlijkheid is zo droog, zelfs de Sahara is jaloers.",
+        "Als ze een wedstrijd onhandigheid hielden, zou jij per ongeluk verliezen.",
+        "Je geheugen is zo slecht, dat je waarschijnlijk deze roast bent vergeten.",
+        "Je hebt de uitstraling van een uitgeknepen citroen.",
+        "Zelfs je schaduw loopt niet graag met je mee.",
+        "Je hebt de mentale scherpte van een boterham zonder beleg.",
+        "Ik probeerde iets aardigs over je te zeggen, maar ik gaf het op.",
+        "Je hebt de stabiliteit van een wiebelige tafel.",
+        "Zelfs je fantasievrienden verlaten je.",
+        "Als talent een valuta was, zou je straatarm zijn.",
+        "Je hebt de uitstraling van een vergeten paraplu.",
+        "Als domheid een olympische sport was, had je goud gewonnen.",
+        "Je IQ en een kamerplant zitten in dezelfde competitie.",
+        "Je persoonlijkheid is zo plat als een oud cola blikje.",
+        "Jouw humor is zo flauw, dat melk er zuur van wordt.",
+        "Je bent de reden waarom handleidingen bestaan.",
+        "Als je een superkracht had, was het mensen laten zuchten.",
+        "Je hebt de aantrekkingskracht van een magneet in een elektrische storm.",
+        "Als een cactus een betere persoonlijkheid heeft, moet je nadenken over je leven.",
+        "Je bent zo traag, zelfs slakken lachen je uit.",
+        "Als je een horloge was, zou je altijd achterlopen.",
+        "Je bent net een lege batterij, nutteloos en vervelend.",
+        "Je hebt de charme van een pizzadoos zonder pizza.",
+        "Je bent de menselijke versie van een blauw scherm van de dood.",
+        "Als ongeluk een persoon was, zou het jou kennen als familie.",
+        "Je hebt de scherpte van een bot mes." 
+      ];
+      const roast = roasts[Math.floor(Math.random() * roasts.length)];
+      document.getElementById('results').innerHTML = `<div class="result"><h2>Surprise!</h2><p>${roast}</p><div class="button-container"><button onclick="restart()">Ga terug</button></div></div>`;
     }
   </script>
 </head>
 <body>
-  <h1>Diligentia blokjes generator!</h1>
-  <label for="blocks">Voer aantal blokjes in:</label>
-  <input type="number" id="blocks" min="1" placeholder="Hoeveel blokjes wil je?">
-
-  <label>
-    <input type="checkbox" id="special-distribution"> Vink aan indien dubbel water, helft wit
-  </label>
-
-  <button onclick="calculateRequirements()">Diligentia rekent</button>
-
-  <div id="results"></div>
+  <h1>Diligentia Bar Calculator</h1>
+  <div id="input-section" class="input-container">
+    <label for="blocks">Hoeveel blokjes heb je nodig?:</label>
+    <input type="text" id="blocks" placeholder="e.g., 3">
+    <label for="plateau-checkbox" style="display: flex; align-items: center; gap: 5px;">
+      <input type="checkbox" id="plateau-checkbox" onclick="togglePlateauInput()"> Ook plateautjes?
+    </label>
+    <div id="plateau-input" class="hidden">
+      <label for="plateaus">Hoeveel plateautjes?:</label>
+      <input type="number" id="plateaus" placeholder="e.g., 2" min="0">
+    </div>
+    <button onclick="calculateRequirements()">Bereken!</button>
+  </div>
+  <div id="results" class="hidden"></div>
 </body>
 </html>
