@@ -112,7 +112,7 @@
       // Display results
       document.getElementById('results').innerHTML = `
         <div class="result">
-          <h2>Hoeveel heb je nodig voor ${blocks} blokjes en ${plateaus} plateaus</h2>
+          <h2>Hoeveel moet je barbitch halen voor ${blocks} blokjes en ${plateaus} plateaus:</h2>
           <p><strong>Glaswerk:</strong></p>
           <p>Kratjes wijnglazen: ${wineGlassUnits}</p>
           <p>Kratjes j'us glazen: ${juiceGlassUnits}</p>
@@ -136,7 +136,7 @@
     
     function showRoast() {
       const roasts = [
-		"Zelfs een kapotte klok heeft twee keer per dag gelijk, jij niet eens dat.",
+	"Zelfs een kapotte klok heeft twee keer per dag gelijk, jij niet eens dat.",
         "Je haar ziet eruit alsof je tegen de wind in hebt geslapen.",
         "Als er een prijs was voor nutteloos zijn, zou je tweede worden. Want nutteloos ben je zelfs niet goed in.",
         "Jouw WiFi-signaal is sterker dan je persoonlijkheid.",
@@ -179,7 +179,7 @@
         "Je hebt de scherpte van een bot mes." 
       ];
       const roast = roasts[Math.floor(Math.random() * roasts.length)];
-      document.getElementById('results').innerHTML = `<div class="result"><h2>Surprise!</h2><p>${roast}</p><div class="button-container"><button onclick="restart()">Ga terug</button></div></div>`;
+      document.getElementById('results').innerHTML = `<div class="result"><h2>Surprise!</h2><p>${roast}</p><div class="button-container"><button onclick="restart()">Begin opnieuw</button></div></div>`;
     }
   </script>
 </head>
