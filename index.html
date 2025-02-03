@@ -69,13 +69,28 @@
       const plateaus = plateausChecked ? parseInt(document.getElementById('plateaus').value) || 0 : 0;
       
       const specialMessages = {
-        '420': 'Ben jij Thijs?',
+        '420': 'Ben jij Thijs? 🌿',
         '69': 'Nice.',
         'nick': 'We missen Nick!',
-        'xyrian': 'Ik kan huisjes bouwen!',
-        'carolus': 'Omg, hij heeft dit gebouwd?',
-        'noor': 'Barhoofd nummer 1, heb je dit echt nodig?',
-        'isis': 'Crisis met Isis!'
+        'xyrian': '🍆',
+        'carolus': 'Geen Dili-BBQ dit jaar.',
+        'noor': 'Barhoofd nummer 1, heb je dit echt nodig? Foei.',
+        'isis': 'Alleen maar crisis met de enige echte Isis!',
+		'tobias': 'De enige echte chef',
+		'viktor': 'H-h-h-hallo.',
+		'marius': 'Leiden Leiden falala Leiden',
+		'olivia': 'Are you defying gravity? 🧹',
+		'kiki': 'Meneer Detmeijer wil graag wat drankjes!',
+		'mila': 'Een echte funsize toppertje! 🍎',
+		'iris': 'Iris en haar gin, daar gaat een liter in!',
+		'lara': 'Welke bedoel je? De leuke of...de minder leuke.',
+		'tamara': 'De enige echte technicus van het theater.',
+		'4815162342': 'Are you LOST?',
+		'rutger': 'Was hij op tijd vandaag? Zo ja, doe een shotje.',
+		'fleur': 'Vraag haar naar het verhaal waar ze thuisgebracht werd door Marius en Lara.',
+		'elmar': 'Lekkere billen.',
+		'merijn': 'Vraag hem naar zijn exellente LetterBoxd. 🧛🏻',
+		'weekend': 'Dit jaar eind september!',
       };
       
       if (specialMessages[inputValue]) {
@@ -85,7 +100,7 @@
       
       const blocks = parseInt(inputValue);
       if (isNaN(blocks) || blocks <= 0) {
-        alert('Voer een geldig aantal in, lullo.');
+        alert('Voer een geldige waarde in, lullo.');
         return;
       }
       
@@ -184,18 +199,18 @@
   </script>
 </head>
 <body>
-  <h1>Diligentia Bar Calculator</h1>
+  <h1>Dili BarCa</h1>
   <div id="input-section" class="input-container">
     <label for="blocks">Hoeveel blokjes heb je nodig?:</label>
-    <input type="text" id="blocks" placeholder="e.g., 3">
+    <input type="text" id="blocks" placeholder="Bijv. 5, of 6, of 7">
     <label for="plateau-checkbox" style="display: flex; align-items: center; gap: 5px;">
       <input type="checkbox" id="plateau-checkbox" onclick="togglePlateauInput()"> Ook plateautjes?
     </label>
     <div id="plateau-input" class="hidden">
       <label for="plateaus">Hoeveel plateautjes?:</label>
-      <input type="number" id="plateaus" placeholder="e.g., 2" min="0">
+      <input type="number" id="plateaus" placeholder="Alleen cijfers, lullo" min="0">
     </div>
-    <button onclick="calculateRequirements()">Bereken!</button>
+    <button onclick="calculateRequirements()">Slets go!</button>
   </div>
   <div id="results" class="hidden"></div>
 </body>
