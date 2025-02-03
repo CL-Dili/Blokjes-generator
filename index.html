@@ -62,6 +62,18 @@
       const plateauInput = document.getElementById('plateau-input');
       plateauInput.classList.toggle('hidden', !plateauCheckbox.checked);
     }
+	
+	function togglePartyMode() {
+  if (window.partyInterval) {
+    clearInterval(window.partyInterval);
+    window.partyInterval = null;
+    document.body.style.backgroundColor = "#ed1c24"; // Reset to original red
+  } else {
+    window.partyInterval = setInterval(() => {
+      document.body.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    }, 300);
+  }
+}
 
     function calculateRequirements() {
       let inputValue = document.getElementById('blocks').value.trim().toLowerCase();
@@ -138,17 +150,19 @@
           <p>J'us: ${juiceUnits}</p>
           <div class="button-container">
             <button onclick="restart()">Begin opnieuw</button>
-            <button onclick="showRoast()">Durf je...?</button>
+            <button onclick="showRoast()">Durf je?</button>
+			<button onclick="togglePartyMode()">Feestje? 🎉</button>
           </div>
         </div>
       `;
     }
     
-    function restart() {
-      document.getElementById('input-section').classList.remove('hidden');
-      document.getElementById('results').classList.add('hidden');
-    }
-    
+		function restart() {
+	document.getElementById('input-section').classList.remove('hidden');
+	document.getElementById('results').classList.add('hidden');
+	document.body.style.backgroundColor = "#ed1c24"; // Reset background
+	}
+
     function showRoast() {
       const roasts = [
 	"Zelfs een kapotte klok heeft twee keer per dag gelijk, jij niet eens dat.",
