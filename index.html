@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#ed1c24">
-  <meta name="description" content="Bereken snel het benodigde glaswerk en de drank voor Diligentia-blokjes en plateaus.">
-  <title>Dili BarCa</title>
+  <meta name="description" content="Bereken snel het benodigde glaswerk en de drank voor blokjes (en plateaus).">
+  <title>Dili BarCa™</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -89,6 +89,10 @@
       animation: party-spin 4s linear infinite;
     }
 
+    body.party {
+      overflow: hidden;
+    }
+
     @keyframes party-spin {
       to { transform: rotate(360deg) scale(1.08); }
     }
@@ -97,6 +101,8 @@
       transform-origin: center center;
       will-change: transform, filter;
       animation: interface-beat 600ms ease-in-out infinite;
+      pointer-events: none;
+      user-select: none;
     }
 
     @keyframes interface-beat {
@@ -114,6 +120,34 @@
       position: relative;
       z-index: 1;
       width: min(100%, 680px);
+    }
+
+    .confetti-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: block;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    body.party .confetti-canvas {
+      opacity: 1;
+    }
+
+    .visually-hidden {
+      position: fixed;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .brand {
@@ -568,6 +602,8 @@
   </style>
 </head>
 <body>
+  <canvas id="confetti-canvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
   <main class="app">
     <header class="brand">
       <h1>Dili BarCa</h1>
@@ -577,7 +613,7 @@
       <div id="input-section">
         <p class="intro" id="calculator-title">
           <strong>De barcalculator voor blokjes en plateaus.</strong><br>
-          Omdat hoofdrekenen niet in je functieomschrijving stond.
+          Omdat hoofdrekenen niet in je taakomschrijving staat.
         </p>
 
         <form id="calculator-form" novalidate>
@@ -587,7 +623,7 @@
               type="text"
               id="blocks"
               name="blocks"
-              inputmode="numeric"
+              inputmode="text"
               autocomplete="off"
               placeholder="Bijvoorbeeld 5, 6 of 7"
               aria-describedby="blocks-error"
@@ -663,7 +699,7 @@
                   <dd id="red-wine-result">0</dd>
                 </div>
                 <div class="result-row">
-                  <dt>Verpakkingen water<br><small>8 flesjes per verpakking</small></dt>
+                  <dt>Flessen water<br><small>8 glazen per fles</small></dt>
                   <dd id="water-result">0</dd>
                 </div>
                 <div class="result-row">
@@ -684,7 +720,7 @@
 
         <div id="roast-panel" class="roast-panel hidden">
           <div class="roast-icon" aria-hidden="true">🔥</div>
-          <p class="eyebrow">Je vroeg er zelf om</p>
+          <p class="eyebrow">Je was gewaarschuwd...</p>
           <h2 id="roast-text">Klaar voor?</h2>
           <div class="actions">
             <button class="button-primary" type="button" id="roast-again-button">Nog één dan</button>
@@ -706,6 +742,7 @@
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <p id="party-status" class="visually-hidden" role="status" aria-live="assertive"></p>
 
   <script>
     "use strict";
@@ -740,24 +777,24 @@
     const specialMessages = {
       "420": "Ben jij Thijs? 🌿",
       "69": "Nice.",
-      "nick": "We missen Nick!",
+      "shawn": "I love it when you call me...💃🏻",
       "xyrian": "🍆",
       "carolus": "Geen Dili-BBQ dit jaar.",
       "noor": "Barhoofd nummer 1, heb je dit echt nodig? Foei.",
-      "isis": "Alleen maar crisis met de enige echte Isis!",
+      "isis": "Alleen maar crisis met Isis!",
       "tobias": "De enige echte chef.",
-      "viktor": "H-h-h-hallo.",
+      "meggy": "Queen. 👸🏼",
       "marius": "Leiden Leiden falala Leiden",
       "olivia": "Are you defying gravity? 🧹",
       "kiki": "Meneer Detmeijer wil graag wat drankjes!",
-      "mila": "Een echte funsize toppertje! 🍎",
+      "hugo": "Geef hem een takje munt!",
       "iris": "Iris en haar gin, daar gaat een liter in!",
       "lara": "Welke bedoel je? De leuke of... de minder leuke.",
       "tamara": "De enige echte technicus van het theater.",
       "4815162342": "Are you LOST?",
-      "rutger": "Was hij op tijd vandaag? Zo ja, doe een shotje.",
+      "aimane": "Nu al langer volgehouden dan Max, Lola, Sofie en...die ene kerel.",
       "fleur": "Vraag haar naar het verhaal waar ze thuisgebracht werd door Marius en Lara.",
-      "elmar": "Lekkere billen.",
+      "elmar": "Garga-geil!",
       "merijn": "Vraag hem naar zijn excellente Letterboxd. 🧛🏻",
       "weekend": "Dit jaar eind september!"
     };
@@ -807,8 +844,8 @@
     ];
 
     const quips = [
-      "Zo. Nu alleen nog iemand vinden die het daadwerkelijk gaat halen.",
-      "Geen paniek. De Excel-sheet weet hier niets van.",
+      "Zo. Laat de barbitch dit maar halen.",
+      "Neem gelijk een blikje Coca-Cola Zero mee voor Carolus.",
       "Wetenschappelijk verantwoord? Nee. Dili-verantwoord? Absoluut.",
       "Barhoofd blij, barbitch op pad. Precies zoals het hoort.",
       "Dit resultaat is met 100% zelfvertrouwen en 0% aansprakelijkheid berekend."
@@ -826,6 +863,12 @@
     const calculationPanel = document.getElementById("calculation-panel");
     const roastPanel = document.getElementById("roast-panel");
     const partyButton = document.getElementById("party-button");
+    const app = document.querySelector(".app");
+    const partyStatus = document.getElementById("party-status");
+    const confettiCanvas = document.getElementById("confetti-canvas");
+    const confettiContext = confettiCanvas.getContext("2d");
+    const pileCanvas = document.createElement("canvas");
+    const pileContext = pileCanvas.getContext("2d");
     const dialog = document.getElementById("message-dialog");
     const dialogMessage = document.getElementById("dialog-message");
     const toast = document.getElementById("toast");
@@ -833,6 +876,30 @@
     let currentResult = null;
     let lastRoastIndex = -1;
     let toastTimer = null;
+    let partyStarted = false;
+    let confettiFrame = null;
+    let confettiLastTime = 0;
+    let confettiSpawnRemainder = 0;
+    let confettiLaunchSide = 0;
+    let confettiParticles = [];
+    let pileHeights = new Float32Array(0);
+    let confettiWidth = 0;
+    let confettiHeight = 0;
+    let confettiPixelRatio = 1;
+
+    const CONFETTI_COLUMN_WIDTH = 8;
+    const PILE_MAX_SLOPE = CONFETTI_COLUMN_WIDTH * 0.95;
+    const CONFETTI_COLORS = [
+      "#ed1c24",
+      "#ffcc00",
+      "#34c759",
+      "#00c7be",
+      "#007aff",
+      "#af52de",
+      "#ff2d55",
+      "#ffffff"
+    ];
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     plateausCheckbox.addEventListener("change", togglePlateauInput);
     form.addEventListener("submit", calculateRequirements);
@@ -840,7 +907,7 @@
     document.getElementById("roast-button").addEventListener("click", showRoast);
     document.getElementById("roast-again-button").addEventListener("click", showRoast);
     document.getElementById("back-button").addEventListener("click", showCalculation);
-    document.getElementById("party-button").addEventListener("click", togglePartyMode);
+    document.getElementById("party-button").addEventListener("click", startPartyMode);
     document.getElementById("restart-button").addEventListener("click", restart);
     document.getElementById("roast-restart-button").addEventListener("click", restart);
     document.getElementById("dialog-close-button").addEventListener("click", () => dialog.close());
@@ -955,7 +1022,7 @@
         "Drank:",
         `• Flessen witte wijn: ${currentResult.whiteWine}`,
         `• Flessen rode wijn: ${currentResult.redWine}`,
-        `• Verpakkingen water (8 flesjes): ${currentResult.water}`,
+        `• Flessen water (8 glazen per fles): ${currentResult.water}`,
         `• Flesjes jus: ${currentResult.juice}`
       ].join("\n");
 
@@ -1013,29 +1080,332 @@
       }
     }
 
-    function togglePartyMode() {
-      const isParty = document.body.classList.toggle("party");
-      partyButton.setAttribute("aria-pressed", String(isParty));
-      partyButton.textContent = isParty ? "Feest stoppen 🛑" : "Feestje? 🎉";
-    }
+    function startPartyMode() {
+      if (partyStarted) return;
 
-    function stopPartyMode() {
-      document.body.classList.remove("party");
-      partyButton.setAttribute("aria-pressed", "false");
-      partyButton.textContent = "Feestje? 🎉";
+      partyStarted = true;
+      document.body.classList.add("party");
+      partyButton.setAttribute("aria-pressed", "true");
+      partyButton.textContent = "Te laat! 🎉";
+      partyButton.disabled = true;
+      partyStatus.textContent = "Feestmodus gestart. Vernieuw de pagina om opnieuw te beginnen.";
+
+      resizeConfettiCanvas();
+      app.inert = true;
+      confettiLastTime = performance.now();
+      confettiFrame = window.requestAnimationFrame(animateConfetti);
     }
 
     function restart() {
+      if (partyStarted) return;
+
       form.reset();
       currentResult = null;
       clearErrors();
-      stopPartyMode();
       showCalculation();
       results.classList.add("hidden");
       inputSection.classList.remove("hidden");
       plateauField.classList.add("hidden");
       plateausInput.disabled = true;
       window.setTimeout(() => blocksInput.focus(), 0);
+    }
+
+    function resizeConfettiCanvas() {
+      const oldWidth = confettiWidth;
+      const oldHeight = confettiHeight;
+      const oldPileHeights = pileHeights;
+
+      confettiWidth = window.innerWidth;
+      confettiHeight = window.innerHeight;
+      confettiPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+      for (const canvas of [confettiCanvas, pileCanvas]) {
+        canvas.width = Math.round(confettiWidth * confettiPixelRatio);
+        canvas.height = Math.round(confettiHeight * confettiPixelRatio);
+      }
+
+      confettiContext.setTransform(confettiPixelRatio, 0, 0, confettiPixelRatio, 0, 0);
+      pileContext.setTransform(confettiPixelRatio, 0, 0, confettiPixelRatio, 0, 0);
+
+      const columnCount = Math.ceil(confettiWidth / CONFETTI_COLUMN_WIDTH);
+      pileHeights = new Float32Array(columnCount);
+
+      if (oldPileHeights.length && oldWidth > 0 && oldHeight > 0) {
+        for (let column = 0; column < columnCount; column += 1) {
+          const oldColumn = Math.min(
+            oldPileHeights.length - 1,
+            Math.floor((column / columnCount) * oldPileHeights.length)
+          );
+          pileHeights[column] = (oldPileHeights[oldColumn] / oldHeight) * confettiHeight;
+        }
+
+        const scaleX = confettiWidth / oldWidth;
+        const scaleY = confettiHeight / oldHeight;
+        confettiParticles.forEach((particle) => {
+          particle.x *= scaleX;
+          particle.y *= scaleY;
+        });
+      }
+
+      buildPileTexture();
+    }
+
+    function animateConfetti(time) {
+      const elapsed = Math.min((time - confettiLastTime) / 1000, 0.035);
+      confettiLastTime = time;
+
+      if (prefersReducedMotion) {
+        confettiSpawnRemainder += elapsed * 16;
+        while (confettiSpawnRemainder >= 1) {
+          settleReducedMotionConfetti();
+          confettiSpawnRemainder -= 1;
+        }
+      } else {
+        const spawnRate = confettiWidth < 560 ? 52 : 70;
+        confettiSpawnRemainder += elapsed * spawnRate;
+
+        while (confettiSpawnRemainder >= 1) {
+          launchConfetti(confettiLaunchSide);
+          confettiLaunchSide = confettiLaunchSide === 0 ? 1 : 0;
+          confettiSpawnRemainder -= 1;
+        }
+
+        updateConfettiParticles(elapsed);
+      }
+
+      drawConfettiScene();
+      confettiFrame = window.requestAnimationFrame(animateConfetti);
+    }
+
+    function launchConfetti(side) {
+      const gravity = Math.max(720, confettiHeight * 0.95);
+      const launchVelocity = Math.sqrt(2 * gravity * confettiHeight);
+      const fromLeft = side === 0;
+      const startX = fromLeft ? 16 : confettiWidth - 16;
+      const targetX = randomBetween(confettiWidth * 0.34, confettiWidth * 0.66);
+
+      confettiParticles.push({
+        x: startX,
+        y: confettiHeight - 10,
+        vx: (targetX - startX) * randomBetween(1.45, 1.75),
+        vy: -launchVelocity * randomBetween(0.82, 1.04),
+        gravity,
+        terminalVelocity: randomBetween(145, 235),
+        flutterPhase: randomBetween(0, Math.PI * 2),
+        flutterSpeed: randomBetween(4.5, 8),
+        flutterStrength: randomBetween(24, 58),
+        width: randomBetween(7, 15),
+        height: randomBetween(5, 11),
+        color: randomItem(CONFETTI_COLORS),
+        rotation: randomBetween(0, Math.PI * 2),
+        spin: randomBetween(-9, 9),
+        shape: Math.random() > 0.78 ? "circle" : "rectangle"
+      });
+    }
+
+    function updateConfettiParticles(elapsed) {
+      const stillFlying = [];
+
+      for (const particle of confettiParticles) {
+        particle.vy += particle.gravity * elapsed;
+        particle.vy = Math.min(particle.vy, particle.terminalVelocity);
+        particle.vx *= Math.pow(0.975, elapsed * 60);
+        particle.flutterPhase += particle.flutterSpeed * elapsed;
+        particle.x += (
+          particle.vx + Math.sin(particle.flutterPhase) * particle.flutterStrength
+        ) * elapsed;
+        particle.y += particle.vy * elapsed;
+        particle.rotation += particle.spin * elapsed;
+
+        if (particle.x < 0) {
+          particle.x = 0;
+          particle.vx = Math.abs(particle.vx) * 0.72;
+        } else if (particle.x > confettiWidth) {
+          particle.x = confettiWidth;
+          particle.vx = -Math.abs(particle.vx) * 0.72;
+        }
+
+        const pileTop = getPileTop(particle.x);
+        const landed = particle.vy > 0 && particle.y + particle.height / 2 >= pileTop;
+
+        if (landed) {
+          settleConfetti(particle);
+        } else if (particle.y < confettiHeight + 80) {
+          stillFlying.push(particle);
+        }
+      }
+
+      confettiParticles = stillFlying;
+    }
+
+    function getPileTop(x) {
+      const position = Math.max(0, Math.min(
+        pileHeights.length - 1,
+        x / CONFETTI_COLUMN_WIDTH
+      ));
+      const leftColumn = Math.floor(position);
+      const rightColumn = Math.min(pileHeights.length - 1, leftColumn + 1);
+      const mix = position - leftColumn;
+      const pileHeight = pileHeights[leftColumn] * (1 - mix) + pileHeights[rightColumn] * mix;
+      return confettiHeight - pileHeight;
+    }
+
+    function settleConfetti(particle) {
+      const column = Math.max(0, Math.min(
+        pileHeights.length - 1,
+        Math.floor(particle.x / CONFETTI_COLUMN_WIDTH)
+      ));
+      const particleVolume = Math.max(95, particle.width * particle.height * 1.65);
+      pileHeights[column] += particleVolume / CONFETTI_COLUMN_WIDTH;
+      relaxPile();
+    }
+
+    function settleReducedMotionConfetti() {
+      const x = randomBetween(confettiWidth * 0.34, confettiWidth * 0.66);
+      const particle = {
+        x,
+        width: randomBetween(9, 17),
+        height: randomBetween(7, 12),
+        color: randomItem(CONFETTI_COLORS),
+        rotation: randomBetween(0, Math.PI * 2),
+        shape: Math.random() > 0.8 ? "circle" : "rectangle"
+      };
+      settleConfetti(particle);
+    }
+
+    function relaxPile() {
+      for (let pass = 0; pass < 18; pass += 1) {
+        let moved = false;
+        const leftToRight = pass % 2 === 0;
+        const start = leftToRight ? 0 : pileHeights.length - 2;
+        const end = leftToRight ? pileHeights.length - 1 : -1;
+        const step = leftToRight ? 1 : -1;
+
+        for (let column = start; column !== end; column += step) {
+          const neighbour = column + 1;
+          const difference = pileHeights[column] - pileHeights[neighbour];
+
+          if (Math.abs(difference) <= PILE_MAX_SLOPE) continue;
+
+          const transfer = (Math.abs(difference) - PILE_MAX_SLOPE) * 0.48;
+          const highColumn = difference > 0 ? column : neighbour;
+          const lowColumn = difference > 0 ? neighbour : column;
+          pileHeights[highColumn] -= transfer;
+          pileHeights[lowColumn] += transfer;
+          moved = true;
+        }
+
+        if (!moved) break;
+      }
+    }
+
+    function buildPileTexture() {
+      pileContext.clearRect(0, 0, confettiWidth, confettiHeight);
+      const pieceCount = Math.ceil((confettiWidth * confettiHeight) / 72);
+
+      for (let index = 0; index < pieceCount; index += 1) {
+        const width = randomBetween(5, 13);
+        const height = randomBetween(3, 9);
+        const x = randomBetween(0, confettiWidth);
+        const y = randomBetween(0, confettiHeight);
+
+        pileContext.save();
+        pileContext.translate(x, y);
+        pileContext.rotate(randomBetween(0, Math.PI * 2));
+        pileContext.fillStyle = randomItem(CONFETTI_COLORS);
+
+        if (Math.random() > 0.84) {
+          pileContext.beginPath();
+          pileContext.arc(0, 0, width / 2, 0, Math.PI * 2);
+          pileContext.fill();
+        } else {
+          pileContext.fillRect(-width / 2, -height / 2, width, height);
+        }
+
+        pileContext.restore();
+      }
+    }
+
+    function tracePileSurface(context) {
+      context.beginPath();
+      context.moveTo(0, confettiHeight);
+
+      for (let column = 0; column < pileHeights.length; column += 1) {
+        const x = column * CONFETTI_COLUMN_WIDTH;
+        const y = confettiHeight - pileHeights[column];
+        context.lineTo(x, y);
+      }
+
+      context.lineTo(confettiWidth, confettiHeight);
+      context.closePath();
+    }
+
+    function drawPile() {
+      if (!pileHeights.some((height) => height > 0.5)) return;
+
+      confettiContext.save();
+      tracePileSurface(confettiContext);
+      confettiContext.fillStyle = "#651421";
+      confettiContext.fill();
+      confettiContext.clip();
+      confettiContext.globalAlpha = 0.97;
+      confettiContext.drawImage(pileCanvas, 0, 0, confettiWidth, confettiHeight);
+      confettiContext.restore();
+    }
+
+    function drawConfettiScene() {
+      confettiContext.clearRect(0, 0, confettiWidth, confettiHeight);
+      drawCannons();
+      drawPile();
+
+      for (const particle of confettiParticles) {
+        drawFlyingPiece(particle);
+      }
+    }
+
+    function drawCannons() {
+      drawCannon(24, confettiHeight - 18, -Math.PI / 4, false);
+      drawCannon(confettiWidth - 24, confettiHeight - 18, Math.PI / 4, true);
+    }
+
+    function drawCannon(x, y, angle, mirrored) {
+      confettiContext.save();
+      confettiContext.translate(x, y);
+      confettiContext.scale(mirrored ? -1 : 1, 1);
+      confettiContext.rotate(angle);
+      confettiContext.fillStyle = "#1e1a1b";
+      confettiContext.fillRect(-10, -7, 48, 24);
+      confettiContext.fillStyle = "#ed1c24";
+      confettiContext.fillRect(-6, -4, 45, 18);
+      confettiContext.fillStyle = "#ffcc00";
+      confettiContext.fillRect(34, -6, 8, 22);
+      confettiContext.restore();
+    }
+
+    function drawFlyingPiece(particle) {
+      confettiContext.save();
+      confettiContext.translate(particle.x, particle.y);
+      confettiContext.rotate(particle.rotation);
+      confettiContext.fillStyle = particle.color;
+
+      if (particle.shape === "circle") {
+        confettiContext.beginPath();
+        confettiContext.arc(0, 0, particle.width / 2, 0, Math.PI * 2);
+        confettiContext.fill();
+      } else {
+        confettiContext.fillRect(
+          -particle.width / 2,
+          -particle.height / 2,
+          particle.width,
+          particle.height
+        );
+      }
+
+      confettiContext.restore();
+    }
+
+    function randomBetween(minimum, maximum) {
+      return minimum + Math.random() * (maximum - minimum);
     }
 
     function setFieldError(input, output, message) {
@@ -1073,6 +1443,10 @@
     function randomItem(items) {
       return items[Math.floor(Math.random() * items.length)];
     }
+
+    window.addEventListener("resize", () => {
+      if (partyStarted) resizeConfettiCanvas();
+    });
 
     plateausInput.disabled = true;
   </script>
