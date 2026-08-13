@@ -1,231 +1,1048 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diligentia Bar Calculator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#ed1c24">
+  <meta name="description" content="Bereken snel het benodigde glaswerk en de drank voor Diligentia-blokjes en plateaus.">
+  <title>Dili BarCa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: "Graphik";
+      src: url("Graphik-Regular.woff2") format("woff2"),
+           url("Graphik-Regular.woff") format("woff"),
+           url("Graphik-Regular.otf") format("opentype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Graphik";
+      src: url("Graphik-Bold.woff2") format("woff2"),
+           url("Graphik-Bold.woff") format("woff"),
+           url("Graphik-Bold.otf") format("opentype");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --dili-red: #ed1c24;
+      --dili-red-dark: #ba1017;
+      --ink: #1e1a1b;
+      --muted: #6f6466;
+      --paper: #fffdfb;
+      --soft-red: #fff0f0;
+      --line: #eadfe0;
+      --success: #217a4a;
+      --shadow: 0 24px 70px rgb(100 0 5 / 26%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--dili-red);
+    }
+
     body {
-      font-family: 'Sofia Sans', sans-serif;
-      background-color: #ed1c24;
-      max-width: 600px;
-      margin: 50px auto;
+      min-height: 100vh;
+      margin: 0;
+      padding: 32px 18px;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: "Sofia Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--dili-red);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -40%;
+      z-index: -1;
+      opacity: 0;
+      pointer-events: none;
+      background: conic-gradient(
+        from 0deg,
+        #ff3b30,
+        #ffcc00,
+        #34c759,
+        #00c7be,
+        #007aff,
+        #af52de,
+        #ff2d55,
+        #ff3b30
+      );
+      transition: opacity 250ms ease;
+    }
+
+    body.party::before {
+      opacity: 0.88;
+      animation: party-spin 4s linear infinite;
+    }
+
+    @keyframes party-spin {
+      to { transform: rotate(360deg) scale(1.08); }
+    }
+
+    .app {
+      width: min(100%, 680px);
+    }
+
+    .brand {
+      margin-bottom: 18px;
+      color: #fff;
       text-align: center;
     }
+
     h1 {
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
-      font-weight: bold;
-      font-style: italic;
+      margin: 0;
+      color: #fff;
+      font-family: "Graphik", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: clamp(2.15rem, 8vw, 3.45rem);
+      font-style: normal;
+      font-weight: 700;
+      letter-spacing: normal;
+      line-height: 1.15;
     }
-    label {
-      color: #ffffff;
-      font-family: 'Sofia Sans', sans-serif;
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(24px, 6vw, 42px);
+      border: 1px solid rgb(255 255 255 / 58%);
+      border-radius: 26px;
+      background: rgb(255 253 251 / 97%);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--dili-red), #ff6c71, var(--dili-red));
+    }
+
+    .intro {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .intro strong {
+      color: var(--ink);
+    }
+
+    .field {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .field:first-of-type {
+      margin-top: 0;
+    }
+
+    label,
+    legend {
       display: block;
-      margin: 10px 0;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 1rem;
+      font-weight: 800;
     }
-    .input-container {
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 15px;
+      border: 2px solid var(--line);
+      border-radius: 13px;
+      outline: none;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      font-size: 1.05rem;
+      transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+    }
+
+    input::placeholder {
+      color: #a99da0;
+    }
+
+    input:hover {
+      border-color: #d7c5c7;
+    }
+
+    input:focus-visible {
+      border-color: var(--dili-red);
+      box-shadow: 0 0 0 4px rgb(237 28 36 / 14%);
+    }
+
+    input[aria-invalid="true"] {
+      border-color: var(--dili-red);
+    }
+
+    fieldset {
+      min-width: 0;
+      margin: 22px 0 0;
+      padding: 0;
+      border: 0;
+    }
+
+    fieldset legend {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .check-row {
       display: flex;
-      flex-direction: column;
       align-items: center;
+      gap: 11px;
+      width: fit-content;
+      margin: 0;
+      cursor: pointer;
+      user-select: none;
     }
-    input, button {
-      margin: 10px 0;
-      display: block;
+
+    .check-row input {
+      width: 21px;
+      height: 21px;
+      margin: 0;
+      accent-color: var(--dili-red);
     }
-    .button-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
+
+    .check-row span {
+      font-weight: 800;
     }
-    .result button {
-      margin: 10px;
+
+    .plateau-field {
+      display: grid;
+      grid-template-rows: 1fr;
+      transition: grid-template-rows 220ms ease, opacity 180ms ease, margin 220ms ease;
     }
+
+    .plateau-field > div {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .plateau-field.hidden {
+      display: grid;
+      grid-template-rows: 0fr;
+      margin-top: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .plateau-field label {
+      padding-top: 20px;
+    }
+
+    .error {
+      min-height: 1.2em;
+      margin: 6px 2px 0;
+      color: var(--dili-red-dark);
+      font-size: 0.91rem;
+      font-weight: 700;
+    }
+
+    button {
+      min-height: 48px;
+      padding: 11px 17px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      line-height: 1.15;
+      transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    .button-primary {
+      color: #fff;
+      background: var(--dili-red);
+      box-shadow: 0 9px 20px rgb(237 28 36 / 24%);
+    }
+
+    .button-primary:hover {
+      background: var(--dili-red-dark);
+      box-shadow: 0 12px 24px rgb(186 16 23 / 28%);
+    }
+
+    .button-secondary {
+      color: var(--ink);
+      background: #f3ecec;
+    }
+
+    .button-secondary:hover {
+      background: #e9dede;
+    }
+
+    .button-dark {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .button-dark:hover {
+      background: #000;
+    }
+
+    .calculate-button {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 8px;
+      font-size: 1.08rem;
+    }
+
     .hidden {
       display: none;
     }
-    .result {
-      background-color: #ffffff;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 10px;
+
+    .result-header {
+      margin-bottom: 25px;
+      text-align: center;
     }
-    .result h2, .result p {
-      font-family: 'Sofia Sans', sans-serif;
-      color: #ed1c24;
+
+    .eyebrow {
+      margin: 0 0 5px;
+      color: var(--dili-red);
+      font-size: 0.79rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(1.35rem, 5vw, 1.95rem);
+      line-height: 1.15;
+    }
+
+    .result-groups {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .result-group {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .result-group h3 {
+      margin: 0;
+      padding: 12px 15px;
+      color: #fff;
+      background: var(--dili-red);
+      font-size: 0.98rem;
+    }
+
+    .result-list {
+      margin: 0;
+      padding: 4px 14px;
+    }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0e9e9;
+    }
+
+    .result-row:last-child {
+      border-bottom: 0;
+    }
+
+    .result-row dt {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.2;
+    }
+
+    .result-row dd {
+      min-width: 38px;
+      margin: 0;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: var(--dili-red-dark);
+      background: var(--soft-red);
+      font-size: 1.02rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .quip {
+      margin: 18px 0 0;
+      padding: 13px 15px;
+      border-left: 4px solid var(--dili-red);
+      border-radius: 0 10px 10px 0;
+      color: var(--muted);
+      background: var(--soft-red);
+      font-style: italic;
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .actions .wide {
+      grid-column: 1 / -1;
+    }
+
+    .roast-panel {
+      min-height: 320px;
+      display: grid;
+      align-content: center;
+      text-align: center;
+    }
+
+    .roast-panel.hidden {
+      display: none;
+    }
+
+    .roast-icon {
+      margin-bottom: 8px;
+      font-size: 3rem;
+    }
+
+    .roast-panel h2 {
+      margin-bottom: 24px;
+      color: var(--dili-red);
+    }
+
+    .footer-note {
+      margin: 16px 0 0;
+      color: rgb(255 255 255 / 78%);
+      font-size: 0.84rem;
+      text-align: center;
+    }
+
+    dialog {
+      width: min(calc(100% - 36px), 430px);
+      padding: 0;
+      border: 0;
+      border-radius: 20px;
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 0 28px 90px rgb(0 0 0 / 35%);
+    }
+
+    dialog::backdrop {
+      background: rgb(30 26 27 / 70%);
+      backdrop-filter: blur(3px);
+    }
+
+    .dialog-content {
+      padding: 28px;
+      text-align: center;
+    }
+
+    .dialog-content p {
+      margin: 0 0 20px;
+      font-size: 1.18rem;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .dialog-content button {
+      min-width: 120px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 20;
+      max-width: calc(100% - 36px);
+      padding: 11px 16px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--success);
+      font-weight: 800;
+      box-shadow: 0 12px 35px rgb(0 0 0 / 25%);
+      transform: translate(-50%, 16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .toast.visible {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 22px 12px;
+      }
+
+      .card {
+        border-radius: 21px;
+      }
+
+      .result-groups {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .actions .wide {
+        grid-column: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
-  <script>
-    function togglePlateauInput() {
-      const plateauCheckbox = document.getElementById('plateau-checkbox');
-      const plateauInput = document.getElementById('plateau-input');
-      plateauInput.classList.toggle('hidden', !plateauCheckbox.checked);
-    }
-	
-	function togglePartyMode() {
-  if (window.partyInterval) {
-    clearInterval(window.partyInterval);
-    window.partyInterval = null;
-    document.body.style.backgroundColor = "#ed1c24"; // Reset to original red
-  } else {
-    window.partyInterval = setInterval(() => {
-      document.body.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-    }, 300);
-  }
-}
-
-    function calculateRequirements() {
-      let inputValue = document.getElementById('blocks').value.trim().toLowerCase();
-      const plateausChecked = document.getElementById('plateau-checkbox').checked;
-      const plateaus = plateausChecked ? parseInt(document.getElementById('plateaus').value) || 0 : 0;
-      
-      const specialMessages = {
-        '420': 'Ben jij Thijs? 🌿',
-        '69': 'Nice.',
-        'nick': 'We missen Nick!',
-        'xyrian': '🍆',
-        'carolus': 'Geen Dili-BBQ dit jaar.',
-        'noor': 'Barhoofd nummer 1, heb je dit echt nodig? Foei.',
-        'isis': 'Alleen maar crisis met de enige echte Isis!',
-		'tobias': 'De enige echte chef',
-		'viktor': 'H-h-h-hallo.',
-		'marius': 'Leiden Leiden falala Leiden',
-		'olivia': 'Are you defying gravity? 🧹',
-		'kiki': 'Meneer Detmeijer wil graag wat drankjes!',
-		'mila': 'Een echte funsize toppertje! 🍎',
-		'iris': 'Iris en haar gin, daar gaat een liter in!',
-		'lara': 'Welke bedoel je? De leuke of...de minder leuke.',
-		'tamara': 'De enige echte technicus van het theater.',
-		'4815162342': 'Are you LOST?',
-		'rutger': 'Was hij op tijd vandaag? Zo ja, doe een shotje.',
-		'fleur': 'Vraag haar naar het verhaal waar ze thuisgebracht werd door Marius en Lara.',
-		'elmar': 'Lekkere billen.',
-		'merijn': 'Vraag hem naar zijn exellente LetterBoxd. 🧛🏻',
-		'weekend': 'Dit jaar eind september!',
-      };
-      
-      if (specialMessages[inputValue]) {
-        alert(specialMessages[inputValue]);
-        return;
-      }
-      
-      const blocks = parseInt(inputValue);
-      if (isNaN(blocks) || blocks <= 0) {
-        alert('Voer een geldige waarde in, lullo.');
-        return;
-      }
-      
-      if (blocks > 10) {
-        const confirmAction = confirm("Serieus...meer dan 10 blokjes? Damn...");
-        if (!confirmAction) return;
-      }
-      
-      document.getElementById('results').classList.remove('hidden');
-      document.getElementById('input-section').classList.add('hidden');
-      
-      // Glassware calculations
-      const totalWineGlasses = (16 * blocks) + (6 * plateaus);
-      const totalJuiceGlasses = (4 * blocks) + (3 * plateaus);
-      const wineGlassUnits = Math.ceil(totalWineGlasses / 25);
-      const juiceGlassUnits = Math.ceil(totalJuiceGlasses / 25);
-      
-      // Drink calculations
-      const whiteWineUnits = Math.ceil(((8 * blocks) + (6 * plateaus)) / 6);
-      const redWineUnits = Math.ceil(((4 * blocks) + (3 * plateaus)) / 6);
-      const waterUnits = Math.ceil(((4 * blocks) + (3 * plateaus)) / 8);
-      const juiceUnits = Math.ceil(((4 * blocks) + (3 * plateaus)) / 1);
-      
-      // Display results
-      document.getElementById('results').innerHTML = `
-        <div class="result">
-          <h2>Hoeveel moet je barbitch halen voor <br> ${blocks} blokjes en ${plateaus} plateaus:</h2>
-          <p><strong>Glaswerk:</strong></p>
-          <p>Kratjes wijnglazen: ${wineGlassUnits}</p>
-          <p>Kratjes jus glazen: ${juiceGlassUnits}</p>
-          <p><strong>Drank:</strong></p>
-          <p>Wit: ${whiteWineUnits}</p>
-          <p>Rood: ${redWineUnits}</p>
-          <p>Water: ${waterUnits}</p>
-          <p>Jus: ${juiceUnits}</p>
-          <div class="button-container">
-            <button onclick="restart()">Begin opnieuw</button>
-            <button onclick="showRoast()">Durf je?</button>
-			<button onclick="togglePartyMode()">Feestje? 🎉</button>
-          </div>
-        </div>
-      `;
-    }
-    
-		function restart() {
-	document.getElementById('input-section').classList.remove('hidden');
-	document.getElementById('results').classList.add('hidden');
-	document.body.style.backgroundColor = "#ed1c24"; // Reset background
-	}
-
-    function showRoast() {
-      const roasts = [
-	"Zelfs een kapotte klok heeft twee keer per dag gelijk, jij niet eens dat.",
-        "Je haar ziet eruit alsof je tegen de wind in hebt geslapen.",
-        "Als er een prijs was voor nutteloos zijn, zou je tweede worden. Want nutteloos ben je zelfs niet goed in.",
-        "Jouw WiFi-signaal is sterker dan je persoonlijkheid.",
-        "Ik zou je roasten, maar ik zie dat het leven dat al voor me heeft gedaan.",
-        "Je bent het menselijke equivalent van een 404-error.",
-        "Jouw IQ en kamertemperatuur hebben veel gemeen.",
-        "Je hebt de uitstraling van een natte sok.",
-        "Als luiheid een kunst was, was jij een meester.",
-        "Je hebt de charme van een verkeersdrempel.",
-        "Als humor een bankrekening was, was je failliet.",
-        "Je reflectie draait zich liever om als je in de spiegel kijkt.",
-        "Je hebt de sociale finesse van een deurstop.",
-        "Zelfs Google kan niets positiefs over je vinden.",
-        "Je hebt het charisma van een baksteen.",
-        "Je persoonlijkheid is zo droog, zelfs de Sahara is jaloers.",
-        "Als ze een wedstrijd onhandigheid hielden, zou jij per ongeluk verliezen.",
-        "Je geheugen is zo slecht, dat je waarschijnlijk deze roast bent vergeten.",
-        "Je hebt de uitstraling van een uitgeknepen citroen.",
-        "Zelfs je schaduw loopt niet graag met je mee.",
-        "Je hebt de mentale scherpte van een boterham zonder beleg.",
-        "Ik probeerde iets aardigs over je te zeggen, maar ik gaf het op.",
-        "Je hebt de stabiliteit van een wiebelige tafel.",
-        "Zelfs je fantasievrienden verlaten je.",
-        "Als talent een valuta was, zou je straatarm zijn.",
-        "Je hebt de uitstraling van een vergeten paraplu.",
-        "Als domheid een olympische sport was, had je goud gewonnen.",
-        "Je IQ en een kamerplant zitten in dezelfde competitie.",
-        "Je persoonlijkheid is zo plat als een oud cola blikje.",
-        "Jouw humor is zo flauw, dat melk er zuur van wordt.",
-        "Je bent de reden waarom handleidingen bestaan.",
-        "Als je een superkracht had, was het mensen laten zuchten.",
-        "Je hebt de aantrekkingskracht van een magneet in een elektrische storm.",
-        "Als een cactus een betere persoonlijkheid heeft, moet je nadenken over je leven.",
-        "Je bent zo traag, zelfs slakken lachen je uit.",
-        "Als je een horloge was, zou je altijd achterlopen.",
-        "Je bent net een lege batterij, nutteloos en vervelend.",
-        "Je hebt de charme van een pizzadoos zonder pizza.",
-        "Je bent de menselijke versie van een blauw scherm van de dood.",
-        "Als ongeluk een persoon was, zou het jou kennen als familie.",
-        "Je hebt de scherpte van een bot mes." 
-      ];
-      const roast = roasts[Math.floor(Math.random() * roasts.length)];
-      document.getElementById('results').innerHTML = `<div class="result"><h2>${roast}</h2><div class="button-container"><button onclick="restart()">Begin opnieuw</button></div></div>`;
-    }
-  </script>
 </head>
 <body>
-  <h1>Dili BarCa</h1>
-  <div id="input-section" class="input-container">
-    <label for="blocks">Hoeveel blokjes heb je nodig?:</label>
-    <input type="text" id="blocks" placeholder="Bijv. 5, of 6, of 7">
-    <label for="plateau-checkbox" style="display: flex; align-items: center; gap: 5px;">
-      <input type="checkbox" id="plateau-checkbox" onclick="togglePlateauInput()"> Ook plateautjes?
-    </label>
-    <div id="plateau-input" class="hidden">
-      <label for="plateaus">Hoeveel plateautjes?:</label>
-      <input type="number" id="plateaus" placeholder="Alleen cijfers, lullo" min="0">
+  <main class="app">
+    <header class="brand">
+      <h1>Dili BarCa</h1>
+    </header>
+
+    <section class="card" aria-labelledby="calculator-title">
+      <div id="input-section">
+        <p class="intro" id="calculator-title">
+          <strong>De barcalculator voor blokjes en plateaus.</strong><br>
+          Omdat hoofdrekenen niet in je functieomschrijving stond.
+        </p>
+
+        <form id="calculator-form" novalidate>
+          <div class="field">
+            <label for="blocks">Hoeveel blokjes heb je nodig?</label>
+            <input
+              type="text"
+              id="blocks"
+              name="blocks"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="Bijvoorbeeld 5, 6 of 7"
+              aria-describedby="blocks-error"
+            >
+            <p class="error" id="blocks-error" aria-live="polite"></p>
+          </div>
+
+          <fieldset>
+            <legend>Plateaus</legend>
+            <label class="check-row">
+              <input type="checkbox" id="plateau-checkbox" name="has-plateaus">
+              <span>Ook plateautjes?</span>
+            </label>
+
+            <div id="plateau-field" class="field plateau-field hidden">
+              <div>
+                <label for="plateaus">Hoeveel plateautjes?</label>
+                <input
+                  type="number"
+                  id="plateaus"
+                  name="plateaus"
+                  inputmode="numeric"
+                  placeholder="Alleen cijfers, lullo"
+                  min="1"
+                  step="1"
+                  aria-describedby="plateaus-error"
+                >
+                <p class="error" id="plateaus-error" aria-live="polite"></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <button class="button-primary calculate-button" type="submit">Slets go!</button>
+        </form>
+      </div>
+
+      <div id="results" class="hidden" aria-live="polite">
+        <div id="calculation-panel">
+          <div class="result-header">
+            <p class="eyebrow">Barbitch-bestellijst</p>
+            <h2 id="result-title">Jouw bestellijst</h2>
+          </div>
+
+          <div class="result-groups">
+            <section class="result-group" aria-labelledby="glassware-heading">
+              <h3 id="glassware-heading">Glaswerk</h3>
+              <dl class="result-list">
+                <div class="result-row">
+                  <dt>Kratjes wijnglazen<br><small>25 per krat</small></dt>
+                  <dd id="wine-glasses-result">0</dd>
+                </div>
+                <div class="result-row">
+                  <dt>Kratjes jusglazen<br><small>25 per krat</small></dt>
+                  <dd id="juice-glasses-result">0</dd>
+                </div>
+              </dl>
+            </section>
+
+            <section class="result-group" aria-labelledby="drinks-heading">
+              <h3 id="drinks-heading">Drank</h3>
+              <dl class="result-list">
+                <div class="result-row">
+                  <dt>Flessen witte wijn<br><small>6 glazen per fles</small></dt>
+                  <dd id="white-wine-result">0</dd>
+                </div>
+                <div class="result-row">
+                  <dt>Flessen rode wijn<br><small>6 glazen per fles</small></dt>
+                  <dd id="red-wine-result">0</dd>
+                </div>
+                <div class="result-row">
+                  <dt>Verpakkingen water<br><small>8 flesjes per verpakking</small></dt>
+                  <dd id="water-result">0</dd>
+                </div>
+                <div class="result-row">
+                  <dt>Flesjes jus</dt>
+                  <dd id="juice-result">0</dd>
+                </div>
+              </dl>
+            </section>
+          </div>
+
+          <p class="quip" id="quip"></p>
+
+          <div class="actions">
+            <button class="button-primary" type="button" id="copy-button">Kopieer bestellijst</button>
+            <button class="button-dark" type="button" id="roast-button">Durf je?</button>
+            <button class="button-secondary" type="button" id="party-button" aria-pressed="false">Feestje? 🎉</button>
+            <button class="button-secondary" type="button" id="restart-button">Begin opnieuw</button>
+          </div>
+        </div>
+
+        <div id="roast-panel" class="roast-panel hidden">
+          <div class="roast-icon" aria-hidden="true">🔥</div>
+          <p class="eyebrow">Je vroeg er zelf om</p>
+          <h2 id="roast-text">Klaar voor?</h2>
+          <div class="actions">
+            <button class="button-primary" type="button" id="roast-again-button">Nog één dan</button>
+            <button class="button-dark" type="button" id="back-button">Terug naar berekening</button>
+            <button class="button-secondary wide" type="button" id="roast-restart-button">Begin opnieuw</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">Met liefde en lichte paniek berekend voor Diligentia.</p>
+  </main>
+
+  <dialog id="message-dialog" aria-labelledby="dialog-message">
+    <div class="dialog-content">
+      <p id="dialog-message"></p>
+      <button class="button-primary" type="button" id="dialog-close-button">Oké dan</button>
     </div>
-    <button onclick="calculateRequirements()">Slets go!</button>
-  </div>
-  <div id="results" class="hidden"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    "use strict";
+
+    const REQUIREMENTS = {
+      block: {
+        wineGlasses: 16,
+        juiceGlasses: 4,
+        whiteWine: 8,
+        redWine: 4,
+        water: 4,
+        juice: 4
+      },
+      plateau: {
+        wineGlasses: 6,
+        juiceGlasses: 3,
+        whiteWine: 6,
+        redWine: 3,
+        water: 3,
+        juice: 3
+      },
+      packageSize: {
+        wineGlasses: 25,
+        juiceGlasses: 25,
+        whiteWine: 6,
+        redWine: 6,
+        water: 8,
+        juice: 1
+      }
+    };
+
+    const specialMessages = {
+      "420": "Ben jij Thijs? 🌿",
+      "69": "Nice.",
+      "nick": "We missen Nick!",
+      "xyrian": "🍆",
+      "carolus": "Geen Dili-BBQ dit jaar.",
+      "noor": "Barhoofd nummer 1, heb je dit echt nodig? Foei.",
+      "isis": "Alleen maar crisis met de enige echte Isis!",
+      "tobias": "De enige echte chef.",
+      "viktor": "H-h-h-hallo.",
+      "marius": "Leiden Leiden falala Leiden",
+      "olivia": "Are you defying gravity? 🧹",
+      "kiki": "Meneer Detmeijer wil graag wat drankjes!",
+      "mila": "Een echte funsize toppertje! 🍎",
+      "iris": "Iris en haar gin, daar gaat een liter in!",
+      "lara": "Welke bedoel je? De leuke of... de minder leuke.",
+      "tamara": "De enige echte technicus van het theater.",
+      "4815162342": "Are you LOST?",
+      "rutger": "Was hij op tijd vandaag? Zo ja, doe een shotje.",
+      "fleur": "Vraag haar naar het verhaal waar ze thuisgebracht werd door Marius en Lara.",
+      "elmar": "Lekkere billen.",
+      "merijn": "Vraag hem naar zijn excellente Letterboxd. 🧛🏻",
+      "weekend": "Dit jaar eind september!"
+    };
+
+    const roasts = [
+      "Zelfs een kapotte klok heeft twee keer per dag gelijk, jij niet eens dat.",
+      "Je haar ziet eruit alsof je tegen de wind in hebt geslapen.",
+      "Als er een prijs was voor nutteloos zijn, zou je tweede worden. Want nutteloos ben je zelfs niet goed in.",
+      "Jouw wifisignaal is sterker dan je persoonlijkheid.",
+      "Ik zou je roasten, maar ik zie dat het leven dat al voor me heeft gedaan.",
+      "Je bent het menselijke equivalent van een 404-error.",
+      "Jouw IQ en kamertemperatuur hebben veel gemeen.",
+      "Je hebt de uitstraling van een natte sok.",
+      "Als luiheid een kunst was, was jij een meester.",
+      "Je hebt de charme van een verkeersdrempel.",
+      "Als humor een bankrekening was, was je failliet.",
+      "Je reflectie draait zich liever om als je in de spiegel kijkt.",
+      "Je hebt de sociale finesse van een deurstop.",
+      "Zelfs Google kan niets positiefs over je vinden.",
+      "Je hebt het charisma van een baksteen.",
+      "Je persoonlijkheid is zo droog, zelfs de Sahara is jaloers.",
+      "Als ze een wedstrijd onhandigheid hielden, zou jij per ongeluk verliezen.",
+      "Je geheugen is zo slecht dat je waarschijnlijk deze roast bent vergeten.",
+      "Je hebt de uitstraling van een uitgeknepen citroen.",
+      "Zelfs je schaduw loopt niet graag met je mee.",
+      "Je hebt de mentale scherpte van een boterham zonder beleg.",
+      "Ik probeerde iets aardigs over je te zeggen, maar ik gaf het op.",
+      "Je hebt de stabiliteit van een wiebelige tafel.",
+      "Zelfs je fantasievrienden verlaten je.",
+      "Als talent een valuta was, zou je straatarm zijn.",
+      "Je hebt de uitstraling van een vergeten paraplu.",
+      "Als domheid een olympische sport was, had je goud gewonnen.",
+      "Je IQ en een kamerplant zitten in dezelfde competitie.",
+      "Je persoonlijkheid is zo plat als een oud colablikje.",
+      "Jouw humor is zo flauw dat melk er zuur van wordt.",
+      "Je bent de reden waarom handleidingen bestaan.",
+      "Als je een superkracht had, was het mensen laten zuchten.",
+      "Je hebt de aantrekkingskracht van een magneet in een elektrische storm.",
+      "Als een cactus een betere persoonlijkheid heeft, moet je nadenken over je leven.",
+      "Je bent zo traag, zelfs slakken lachen je uit.",
+      "Als je een horloge was, zou je altijd achterlopen.",
+      "Je bent net een lege batterij: nutteloos en vervelend.",
+      "Je hebt de charme van een pizzadoos zonder pizza.",
+      "Je bent de menselijke versie van een blauw scherm des doods.",
+      "Als ongeluk een persoon was, zou het jou kennen als familie.",
+      "Je hebt de scherpte van een bot mes."
+    ];
+
+    const quips = [
+      "Zo. Nu alleen nog iemand vinden die het daadwerkelijk gaat halen.",
+      "Geen paniek. De Excel-sheet weet hier niets van.",
+      "Wetenschappelijk verantwoord? Nee. Dili-verantwoord? Absoluut.",
+      "Barhoofd blij, barbitch op pad. Precies zoals het hoort.",
+      "Dit resultaat is met 100% zelfvertrouwen en 0% aansprakelijkheid berekend."
+    ];
+
+    const form = document.getElementById("calculator-form");
+    const inputSection = document.getElementById("input-section");
+    const blocksInput = document.getElementById("blocks");
+    const plateausCheckbox = document.getElementById("plateau-checkbox");
+    const plateauField = document.getElementById("plateau-field");
+    const plateausInput = document.getElementById("plateaus");
+    const blocksError = document.getElementById("blocks-error");
+    const plateausError = document.getElementById("plateaus-error");
+    const results = document.getElementById("results");
+    const calculationPanel = document.getElementById("calculation-panel");
+    const roastPanel = document.getElementById("roast-panel");
+    const partyButton = document.getElementById("party-button");
+    const dialog = document.getElementById("message-dialog");
+    const dialogMessage = document.getElementById("dialog-message");
+    const toast = document.getElementById("toast");
+
+    let currentResult = null;
+    let lastRoastIndex = -1;
+    let toastTimer = null;
+
+    plateausCheckbox.addEventListener("change", togglePlateauInput);
+    form.addEventListener("submit", calculateRequirements);
+    document.getElementById("copy-button").addEventListener("click", copyShoppingList);
+    document.getElementById("roast-button").addEventListener("click", showRoast);
+    document.getElementById("roast-again-button").addEventListener("click", showRoast);
+    document.getElementById("back-button").addEventListener("click", showCalculation);
+    document.getElementById("party-button").addEventListener("click", togglePartyMode);
+    document.getElementById("restart-button").addEventListener("click", restart);
+    document.getElementById("roast-restart-button").addEventListener("click", restart);
+    document.getElementById("dialog-close-button").addEventListener("click", () => dialog.close());
+
+    function togglePlateauInput() {
+      const isChecked = plateausCheckbox.checked;
+      plateauField.classList.toggle("hidden", !isChecked);
+      plateausInput.disabled = !isChecked;
+
+      if (isChecked) {
+        window.setTimeout(() => plateausInput.focus(), 220);
+      } else {
+        plateausInput.value = "";
+        clearFieldError(plateausInput, plateausError);
+      }
+    }
+
+    function calculateRequirements(event) {
+      event.preventDefault();
+      clearErrors();
+
+      const rawBlocks = blocksInput.value.trim().toLowerCase();
+
+      if (Object.prototype.hasOwnProperty.call(specialMessages, rawBlocks)) {
+        showMessage(specialMessages[rawBlocks]);
+        return;
+      }
+
+      if (!/^\d+$/.test(rawBlocks) || Number(rawBlocks) <= 0) {
+        setFieldError(blocksInput, blocksError, "Voer een geldig aantal blokjes in, lullo.");
+        return;
+      }
+
+      const blocks = Number.parseInt(rawBlocks, 10);
+      let plateaus = 0;
+
+      if (plateausCheckbox.checked) {
+        const rawPlateaus = plateausInput.value.trim();
+
+        if (!/^\d+$/.test(rawPlateaus) || Number(rawPlateaus) <= 0) {
+          setFieldError(plateausInput, plateausError, "Je wilde plateautjes. Hoeveel dan, chef?");
+          return;
+        }
+
+        plateaus = Number.parseInt(rawPlateaus, 10);
+      }
+
+      if (blocks + plateaus > 10) {
+        const shouldContinue = window.confirm("Serieus... meer dan 10 opstellingen bij elkaar? Damn...");
+        if (!shouldContinue) return;
+      }
+
+      currentResult = {
+        blocks,
+        plateaus,
+        wineGlasses: calculateUnits("wineGlasses", blocks, plateaus),
+        juiceGlasses: calculateUnits("juiceGlasses", blocks, plateaus),
+        whiteWine: calculateUnits("whiteWine", blocks, plateaus),
+        redWine: calculateUnits("redWine", blocks, plateaus),
+        water: calculateUnits("water", blocks, plateaus),
+        juice: calculateUnits("juice", blocks, plateaus)
+      };
+
+      renderResults();
+      inputSection.classList.add("hidden");
+      results.classList.remove("hidden");
+      showCalculation();
+      document.getElementById("result-title").focus?.();
+    }
+
+    function calculateUnits(type, blocks, plateaus) {
+      const required = (REQUIREMENTS.block[type] * blocks) + (REQUIREMENTS.plateau[type] * plateaus);
+      return Math.ceil(required / REQUIREMENTS.packageSize[type]);
+    }
+
+    function renderResults() {
+      const { blocks, plateaus } = currentResult;
+      const blockText = `${blocks} ${pluralize(blocks, "blokje", "blokjes")}`;
+      const plateauText = plateaus > 0
+        ? ` en ${plateaus} ${pluralize(plateaus, "plateau", "plateaus")}`
+        : "";
+
+      document.getElementById("result-title").textContent = `Voor ${blockText}${plateauText}`;
+      document.getElementById("wine-glasses-result").textContent = currentResult.wineGlasses;
+      document.getElementById("juice-glasses-result").textContent = currentResult.juiceGlasses;
+      document.getElementById("white-wine-result").textContent = currentResult.whiteWine;
+      document.getElementById("red-wine-result").textContent = currentResult.redWine;
+      document.getElementById("water-result").textContent = currentResult.water;
+      document.getElementById("juice-result").textContent = currentResult.juice;
+      document.getElementById("quip").textContent = randomItem(quips);
+    }
+
+    function pluralize(amount, singular, plural) {
+      return amount === 1 ? singular : plural;
+    }
+
+    async function copyShoppingList() {
+      if (!currentResult) return;
+
+      const { blocks, plateaus } = currentResult;
+      const blockText = `${blocks} ${pluralize(blocks, "blokje", "blokjes")}`;
+      const plateauText = plateaus > 0
+        ? ` en ${plateaus} ${pluralize(plateaus, "plateau", "plateaus")}`
+        : "";
+      const list = [
+        `Dili BarCa – ${blockText}${plateauText}`,
+        "",
+        "Glaswerk:",
+        `• Kratjes wijnglazen: ${currentResult.wineGlasses}`,
+        `• Kratjes jusglazen: ${currentResult.juiceGlasses}`,
+        "",
+        "Drank:",
+        `• Flessen witte wijn: ${currentResult.whiteWine}`,
+        `• Flessen rode wijn: ${currentResult.redWine}`,
+        `• Verpakkingen water (8 flesjes): ${currentResult.water}`,
+        `• Flesjes jus: ${currentResult.juice}`
+      ].join("\n");
+
+      try {
+        await navigator.clipboard.writeText(list);
+        showToast("Bestellijst gekopieerd. Lekker bezig.");
+      } catch {
+        fallbackCopy(list);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.setAttribute("readonly", "");
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+
+      try {
+        document.execCommand("copy");
+        showToast("Bestellijst gekopieerd. Lekker bezig.");
+      } catch {
+        showToast("Kopiëren lukte niet. Dat krijg je met technologie.");
+      } finally {
+        textArea.remove();
+      }
+    }
+
+    function showRoast() {
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * roasts.length);
+      } while (roasts.length > 1 && nextIndex === lastRoastIndex);
+
+      lastRoastIndex = nextIndex;
+      document.getElementById("roast-text").textContent = roasts[nextIndex];
+      calculationPanel.classList.add("hidden");
+      roastPanel.classList.remove("hidden");
+    }
+
+    function showCalculation() {
+      roastPanel.classList.add("hidden");
+      calculationPanel.classList.remove("hidden");
+    }
+
+    function togglePartyMode() {
+      const isParty = document.body.classList.toggle("party");
+      partyButton.setAttribute("aria-pressed", String(isParty));
+      partyButton.textContent = isParty ? "Feest stoppen 🛑" : "Feestje? 🎉";
+    }
+
+    function stopPartyMode() {
+      document.body.classList.remove("party");
+      partyButton.setAttribute("aria-pressed", "false");
+      partyButton.textContent = "Feestje? 🎉";
+    }
+
+    function restart() {
+      form.reset();
+      currentResult = null;
+      clearErrors();
+      stopPartyMode();
+      showCalculation();
+      results.classList.add("hidden");
+      inputSection.classList.remove("hidden");
+      plateauField.classList.add("hidden");
+      plateausInput.disabled = true;
+      window.setTimeout(() => blocksInput.focus(), 0);
+    }
+
+    function setFieldError(input, output, message) {
+      input.setAttribute("aria-invalid", "true");
+      output.textContent = message;
+      input.focus();
+    }
+
+    function clearFieldError(input, output) {
+      input.removeAttribute("aria-invalid");
+      output.textContent = "";
+    }
+
+    function clearErrors() {
+      clearFieldError(blocksInput, blocksError);
+      clearFieldError(plateausInput, plateausError);
+    }
+
+    function showMessage(message) {
+      dialogMessage.textContent = message;
+      if (typeof dialog.showModal === "function") {
+        dialog.showModal();
+      } else {
+        window.alert(message);
+      }
+    }
+
+    function showToast(message) {
+      window.clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add("visible");
+      toastTimer = window.setTimeout(() => toast.classList.remove("visible"), 2400);
+    }
+
+    function randomItem(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    plateausInput.disabled = true;
+  </script>
 </body>
 </html>
