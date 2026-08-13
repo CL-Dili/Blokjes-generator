@@ -93,6 +93,23 @@
       to { transform: rotate(360deg) scale(1.08); }
     }
 
+    body.party .app {
+      transform-origin: center center;
+      will-change: transform, filter;
+      animation: interface-beat 600ms ease-in-out infinite;
+    }
+
+    @keyframes interface-beat {
+      0%, 100% {
+        transform: scale(1);
+        filter: brightness(1);
+      }
+      45% {
+        transform: scale(1.025);
+        filter: brightness(1.07);
+      }
+    }
+
     .app {
       position: relative;
       z-index: 1;
