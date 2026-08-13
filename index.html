@@ -948,7 +948,7 @@
         const rawPlateaus = plateausInput.value.trim();
 
         if (!/^\d+$/.test(rawPlateaus) || Number(rawPlateaus) <= 0) {
-          setFieldError(plateausInput, plateausError, "Je wilde plateautjes. Hoeveel dan, chef?");
+          setFieldError(plateausInput, plateausError, "Je wilde plateautjes. Hoeveel dan, bitch?");
           return;
         }
 
@@ -956,7 +956,7 @@
       }
 
       if (blocks + plateaus > 10) {
-        const shouldContinue = window.confirm("Serieus... meer dan 10 opstellingen bij elkaar? Damn...");
+        const shouldContinue = window.confirm("Serieus... meer dan 10 blokjes? Damn...");
         if (!shouldContinue) return;
       }
 
