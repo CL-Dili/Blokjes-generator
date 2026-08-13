@@ -67,7 +67,7 @@
       content: "";
       position: fixed;
       inset: -40%;
-      z-index: -1;
+      z-index: 0;
       opacity: 0;
       pointer-events: none;
       background: conic-gradient(
@@ -94,6 +94,8 @@
     }
 
     .app {
+      position: relative;
+      z-index: 1;
       width: min(100%, 680px);
     }
 
@@ -602,6 +604,11 @@
           </fieldset>
 
           <button class="button-primary calculate-button" type="submit">Slets go!</button>
+
+          <div class="actions">
+            <button class="button-dark" type="button" id="roast-button">Durf je?</button>
+            <button class="button-secondary" type="button" id="party-button" aria-pressed="false">Feestje? 🎉</button>
+          </div>
         </form>
       </div>
 
@@ -654,8 +661,6 @@
 
           <div class="actions">
             <button class="button-primary" type="button" id="copy-button">Kopieer bestellijst</button>
-            <button class="button-dark" type="button" id="roast-button">Durf je?</button>
-            <button class="button-secondary" type="button" id="party-button" aria-pressed="false">Feestje? 🎉</button>
             <button class="button-secondary" type="button" id="restart-button">Begin opnieuw</button>
           </div>
         </div>
@@ -972,6 +977,8 @@
 
       lastRoastIndex = nextIndex;
       document.getElementById("roast-text").textContent = roasts[nextIndex];
+      inputSection.classList.add("hidden");
+      results.classList.remove("hidden");
       calculationPanel.classList.add("hidden");
       roastPanel.classList.remove("hidden");
     }
@@ -979,6 +986,14 @@
     function showCalculation() {
       roastPanel.classList.add("hidden");
       calculationPanel.classList.remove("hidden");
+
+      if (currentResult) {
+        inputSection.classList.add("hidden");
+        results.classList.remove("hidden");
+      } else {
+        results.classList.add("hidden");
+        inputSection.classList.remove("hidden");
+      }
     }
 
     function togglePartyMode() {
